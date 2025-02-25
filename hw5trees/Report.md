@@ -1,0 +1,9 @@
+# WEEK 6 ICE Eric Arnold
+
+# Here are my results:
+MORE NOISY TRAINING DATA
+raw score 145
+0.725
+LESS NOISY TRAINING DATA
+RAW SCORE 200
+1.0
