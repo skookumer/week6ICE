@@ -178,10 +178,7 @@ def main():
                     PIVOTS, 
                     target="Assessment", 
                     invert=False, 
-                    parent_pivot="ROOT", 
-                    score=CollectiveImpurityGini.compute(records, 
-                                                         "Assessment", 
-                                                         invert=False))
+                    parent_pivot="ROOT",)
     
     new_records, labels = open_file_in_folder("data", "test_data.csv")
 
@@ -190,45 +187,6 @@ def main():
     '''
     for new_record in new_records:
         x = root.classify(new_record)
-        if x > 0:
-            x = True
-        else:
-            x = False
-        new_record.predicted_label = x
-    
-
-    '''
-    SCORING THE NEW RECORDS
-    '''
-    score = 0
-    for new_record in new_records:
-        #print(new_record.predicted_label, new_record.attrs["Assessment"])
-        if new_record.predicted_label == new_record.attrs["Assessment"]:
-            score += 1
-    print("MORE NOISY TRAINING DATA")
-    print("raw score", score)
-    score = score / len(new_records)
-
-    print(score)
-
-    less_noisy_records, labels = open_file_in_folder("data", "training_data_more_noise-1.csv")
-
-    root2 = TreeNode(less_noisy_records,
-                    CollectiveImpurityGini, 
-                    1000, 
-                    PIVOTS, 
-                    target="Assessment", 
-                    invert=False, 
-                    parent_pivot="ROOT", 
-                    score=CollectiveImpurityGini.compute(records, 
-                                                         "Assessment", 
-                                                         invert=False))
-    
-    '''
-    CLASSIFYING NEW RECORDS
-    '''
-    for new_record in new_records:
-        x = root2.classify(new_record)
         if x > 0.5:
             x = True
         else:
@@ -244,8 +202,8 @@ def main():
         #print(new_record.predicted_label, new_record.attrs["Assessment"])
         if new_record.predicted_label == new_record.attrs["Assessment"]:
             score += 1
-    print("LESS NOISY TRAINING DATA")
-    print("RAW SCORE", score)
+    print("ICE6TrainingDataFile")
+    print("raw score", score)
     score = score / len(new_records)
 
     print(score)

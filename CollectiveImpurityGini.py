@@ -10,5 +10,5 @@ class CollectiveImpurityGini(ParentStrategy):
         '''
     
         p_i = ParentStrategy.probability(record_list, label, invert)
-
+        
         return 1 - (p_i ** 2 + (1 - p_i) ** 2)

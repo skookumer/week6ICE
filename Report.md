@@ -1,29 +1,14 @@
 # WEEK 6 ICE Eric Arnold
 
-# Here are my results:
-MORE NOISY TRAINING DATA
-raw score 145
-0.725
-LESS NOISY TRAINING DATA
-RAW SCORE 200
-1.0
+# Notes on ICE 6
 
-# After the 2/28 update
-MORE NOISY TRAINING DATA
-raw score 152
-0.76
-LESS NOISY TRAINING DATA
-RAW SCORE 200
-1.0
+Checked my weighted gini computation vs HW5 and found they matched for the first layer:
 
-However, if i round up Total Cholesterol and Age to the next whole number...
+{'IsAfricanAmerican': 0.4166666666666667, 'Gender': 0.5, 'OnHypertensionMedication': 0.4166666666666667, 'HasDiabetes': 0.4444444444444444, 'IsSmoker': 0.4166666666666667, 'Age': 0.47619047619047616, 'Systolic Blood Pressure': 0.2857142857142857, 'Total Cholesterol': 0.48, 'HDL cholesterol': 0.375}
 
-# After rounding and the update
-MORE NOISY TRAINING DATA
-raw score 164
-0.82
-LESS NOISY TRAINING DATA
-RAW SCORE 200
-1.0
+After adjusting my pivots to the averages of the new dataset, I got the correct raw score of 153.
 
-So, I find it more likely that the difference in outcome with test_data.csv is due to differences in my filters rather than something fundamentally wrong with my tree. I just averaged the columns in excel to get my filter values.
+results:
+ICE6TrainingDataFile
+raw score 153
+0.765

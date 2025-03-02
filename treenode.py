@@ -44,11 +44,12 @@ class TreeNode:
                 self.grow_tree()
         
             
-        #print(self, [c.parent_pivot for c in self.children if isinstance(c, TreeNode)], "\n")
+        #print(self, len(self.children), "\n")
+        #[c.parent_pivot for c in self.children if isinstance(c, TreeNode)]
 
 
     def __str__(self):
-        return f"{self.parent_pivot}, impurity: {self.score}, risk: {self.risk}, h = {self.is_homogenous()}, length: {len(self.record_list)}, depth: {self.depth}"
+        return f"{self.parent_pivot}, impurity: {self.score}, risk: {self.risk}, pivot: {self.pivot_name} h = {self.is_homogenous()}, length: {len(self.record_list)}, depth: {self.depth}"
 
 
     def risk_assessment(self):
@@ -59,12 +60,11 @@ class TreeNode:
         return risk / len(self.record_list)
 
     def classify(self, record):
-        #print(self.depth, self.parent_pivot)
         if len(self.children) == 0:
             return self.risk
         
         elif len(self.children) == 1:
-            if self.children[0].pivot(record):
+            if self.pivot:
                 return self.children[0].classify(record)
             else:
                 return self.risk
@@ -85,33 +85,68 @@ class TreeNode:
                 hom = False
         
         return hom
-        
+    
+
+    def compute_val(self, split):
+        if len(split) > 0:
+            gini = self.strategy.compute(split, label=self.target, invert=self.invert)
+            w = len(split) / len(self.record_list)
+        else:
+            return 0, 0
+        return gini, w
+    
+
+    def weighted_impurity(self, splits):
+        gini_1, w_1 = self.compute_val(splits[0])
+        gini_2, w_2 = self.compute_val(splits[1])
+        return w_1 * gini_1 + w_2 * gini_2
+    
+
+    def split(self, pivot):
+        splits= [[],[]]
+        for record in self.record_list:
+            if pivot(record):
+                splits[0].append(record)
+            else:
+                splits[1].append(record)
+        return splits
+
 
     def select_pivot(self):
         scores = {}
 
         for pivot in self.pivots:
             if pivot != self.target:
-                x = self.strategy.compute(record_list=self.record_list, label=pivot, invert=self.invert)
+                splits = self.split(self.pivots[pivot])
+                if len(self.record_list) > 0:
+                    x = self.weighted_impurity(splits)
+                else:
+                    x = 0
                 scores.update({pivot: x})
 
         if len(scores) > 0:
             minim = min(scores.items(), key=lambda x: x[1])[0]
             pivot = self.pivots[minim]
+            self.score = min([k[1] for k in scores.items()])
             self.pivot_name = minim
             self.pivots.pop(minim)
-            return pivot
-        
-        return None
+        else:
+            pivot = None
+        return pivot
+    
 
-
-    def grow_tree(self):
+    def split(self, pivot):
         splits = [[],[]]
         for record in self.record_list:
-            if self.pivot(record):
+            if pivot(record):
                 splits[0].append(record)
             else:
                 splits[1].append(record)
+        return splits
+
+
+    def grow_tree(self):
+        splits = self.split(self.pivot)
 
         for i in range(len(splits)):
             if len(splits[i]) > 0:
@@ -121,7 +156,6 @@ class TreeNode:
                     dir = "_False"
                 node = TreeNode(splits[i], self.strategy, self.max_depth,
                                 self.pivots, self.target, self.invert,
-                                self.pivot_name + f"{dir}", self.depth, 
-                                score=self.strategy.compute(record_list=splits[i], label=self.target,invert=False)
+                                self.pivot_name + f"{dir}", self.depth,
                                 )
                 self.children.append(node)
